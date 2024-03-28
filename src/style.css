@@ -1,0 +1,101 @@
+@font-face {
+  font-family: "ArcadeFont";
+  src: url("../static/fonts/ARCADE.TTF") format("truetype");
+}
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  font-family: "ArcadeFont", sans-serif;
+}
+
+body {
+  background: rgb(22, 22, 22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+canvas {
+  border: 16px solid white;
+}
+
+#menu {
+  margin-top: 20px;
+}
+
+#text {
+  position: fixed;
+  left: 50%;
+  bottom: 70px;
+  transform: translateX(-50%);
+  font-size: 70px;
+  color: green;
+  text-align: center;
+  width: 60vw;
+  animation: opacitySinusoidal 0.5s infinite alternate;
+}
+#container_menu {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+#maxScore {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  font-size: 70px;
+  color: green;
+  text-align: center;
+  width: 100vw;
+}
+
+#currentScore {
+  position: fixed;
+  left: 50%;
+  bottom: 90px;
+  transform: translateX(-50%);
+  font-size: 70px;
+  color: green;
+  text-align: center;
+  width: 100vw;
+}
+
+#title {
+  position: fixed;
+
+  top: 100px;
+  width: 100vw;
+  font-size: 150px;
+  color: green;
+  line-height: 0.8;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes opacitySinusoidal {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#game-menu {
+  list-style-type: none;
+  text-align: center;
+}
+
+#game-menu li {
+  padding: 10px;
+  color: green;
+  font-size: 100px;
+}
