@@ -24,20 +24,25 @@ function handleKeyPress(event) {
   if (currentGame == null) {
     switch (event.key) {
       case "ArrowUp":
+        window.parent.postMessage("select1", "*");
         selectedIndex = selectedIndex === 0 ? 2 : selectedIndex - 1;
         break;
       case "ArrowDown":
+        window.parent.postMessage("select1", "*");
         selectedIndex = selectedIndex === 2 ? 0 : selectedIndex + 1;
         break;
       case " ":
+        window.parent.postMessage("select2", "*");
         startGameSelected();
         break;
       case "Enter":
+        window.parent.postMessage("select2", "*");
         startGameSelected();
         break;
     }
     updateSelected();
   } else if (event.key == "Escape" && currentGame != null) {
+    window.parent.postMessage("select2", "*");
     currentScoreElement.style.display = "none";
     maxScoreElement.style.display = "none";
     currentGame.destroy();

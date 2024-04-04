@@ -8,6 +8,7 @@ class Tetris {
     this.maxScoreElement.style.display = "block";
     this.canvas.style.display = "block";
     this.context = this.canvas.getContext("2d");
+    this.loopInterval = 5;
     this.loopId = null;
     this.grid = 32;
     this.currentScore = 0;
@@ -80,8 +81,9 @@ class Tetris {
   }
 
   start() {
-    this.listenKeyboard();
-    this.loopId = requestAnimationFrame(this.loop);
+    window.addEventListener("message", this.handleParentMessage);
+    window.addEventListener("keydown", this.keyDownHandler);
+    this.loopId = setInterval(this.loop, this.loopInterval);
   }
 
   loop = () => {
@@ -134,7 +136,6 @@ class Tetris {
         }
       }
     }
-    this.loopId = requestAnimationFrame(this.loop);
   };
 
   generateSequence() {
@@ -199,6 +200,7 @@ class Tetris {
       for (let col = 0; col < this.tetromino.matrix[row].length; col++) {
         if (this.tetromino.matrix[row][col]) {
           if (this.tetromino.row + row < 0) {
+            window.parent.postMessage("die", "*");
             this.showGameOver();
             return;
           }
@@ -221,6 +223,11 @@ class Tetris {
       } else {
         row--;
       }
+    }
+    if (numClears > 0) {
+      window.parent.postMessage("tetris", "*");
+    } else {
+      window.parent.postMessage("select1", "*");
     }
     if (numClears == 0) {
       this.currentScore += 10;
@@ -257,8 +264,9 @@ class Tetris {
 
   destroy() {
     this.showGameOver();
-    cancelAnimationFrame(this.loopId);
-    window.removeEventListener("message", this.keyListener);
+    clearInterval(this.loopId);
+    window.removeEventListener("message", this.handleParentMessage);
+    window.removeEventListener("keydown", this.keyDownHandler);
     this.canvas.style.display = "none";
   }
 
@@ -274,11 +282,6 @@ class Tetris {
       this.keyDownHandler(event.data);
     }
   };
-
-  listenKeyboard() {
-    window.addEventListener("message", this.handleParentMessage);
-    window.addEventListener("keydown", this.keyDownHandler);
-  }
 
   keyDownHandler = (e) => {
     if (e.key === "ArrowLeft" || e.key === "ArrowRight") {

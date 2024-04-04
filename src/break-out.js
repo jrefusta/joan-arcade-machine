@@ -9,6 +9,7 @@ class BreakOut {
     this.maxScoreElement.style.display = "block";
     this.canvas.style.display = "block";
     this.currentScore = 0;
+    this.loopInterval = 1;
     this.loopId = null;
     this.brickGap = 2;
     this.brickWidth = 48;
@@ -95,9 +96,11 @@ class BreakOut {
     this.ball.y += this.ball.dy;
 
     if (this.ball.x < 0) {
+      window.parent.postMessage("hit", "*");
       this.ball.x = 0;
       this.ball.dx *= -1;
     } else if (this.ball.x + this.ball.width > this.canvas.width) {
+      window.parent.postMessage("hit", "*");
       this.ball.x = this.canvas.width - this.ball.width;
       this.ball.dx *= -1;
     }
@@ -112,6 +115,7 @@ class BreakOut {
       this.ball.y = 300;
       this.ball.dx = 0;
       this.ball.dy = 0;
+      window.parent.postMessage("die", "*");
       this.resetLevel();
     }
     this.checkBallPaddleCollision();
@@ -119,6 +123,7 @@ class BreakOut {
     for (let i = 0; i < this.bricks.length; i++) {
       const brick = this.bricks[i];
       if (this.collides(this.ball, brick)) {
+        window.parent.postMessage("hit", "*");
         switch (brick.colorCode) {
           case "Y":
             this.currentScore += 1;
@@ -171,7 +176,6 @@ class BreakOut {
       this.paddle.width,
       this.paddle.height
     );
-    this.loopId = requestAnimationFrame(this.loop);
   };
 
   keyDownHandler = (e) => {
@@ -234,6 +238,7 @@ class BreakOut {
     };
 
     if (this.collides(this.ball, innerCenter)) {
+      window.parent.postMessage("hit", "*");
       this.ball.dx = this.ball.dx < 0 ? -1 : 1;
       this.ball.dy = this.ball.dy < 0 ? 2 : -2;
       this.ball.y = this.paddle.y - this.ball.height;
@@ -241,6 +246,7 @@ class BreakOut {
       this.collides(this.ball, innerRight) ||
       this.collides(this.ball, innerLeft)
     ) {
+      window.parent.postMessage("hit", "*");
       this.ball.dx = this.ball.dx < 0 ? -2 : 2;
       this.ball.dy = this.ball.dy < 0 ? 2 : -2;
       this.ball.y = this.paddle.y - this.ball.height;
@@ -248,6 +254,7 @@ class BreakOut {
       this.collides(this.ball, outsideRight) ||
       this.collides(this.ball, outsideLeft)
     ) {
+      window.parent.postMessage("hit", "*");
       this.ball.dx = this.ball.dx < 0 ? -2 : 2;
       this.ball.dy = this.ball.dy < 0 ? 1 : -1;
       this.ball.y = this.paddle.y - this.ball.height;
@@ -297,7 +304,7 @@ class BreakOut {
 
   destroy() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    cancelAnimationFrame(this.loopId);
+    clearInterval(this.loopId);
     window.removeEventListener("message", this.handleParentMessage);
     window.removeEventListener("keydown", this.keyDownHandler);
     window.removeEventListener("keyup", this.keyUpHandler);
@@ -308,8 +315,8 @@ class BreakOut {
     this.createLevel(this.level);
     this.ball.dx = 2;
     this.ball.dy = 2;
-    this.loopId = requestAnimationFrame(this.loop);
     this.listenKeyboard();
+    this.loopId = setInterval(this.loop, this.loopInterval);
   }
 }
 

@@ -7,11 +7,9 @@ class SnakeGame {
     this.currentScoreElement.style.display = "block";
     this.maxScoreElement.style.display = "block";
     this.currentScore = 0;
-    this.count = 0;
     this.updateScore();
     this.canvas.style.display = "block";
     this.context = this.canvas.getContext("2d");
-    this.loopId = null;
     this.keyDownAllowed = true;
     this.keysPressedQueue = [];
     this.grid = 32;
@@ -29,6 +27,8 @@ class SnakeGame {
       x: 320,
       y: 320,
     };
+    this.loopInterval = 50;
+    this.loopId = null;
   }
 
   // get random whole numbers in a specific range
@@ -38,13 +38,6 @@ class SnakeGame {
   }
 
   loop = () => {
-    this.loopId = requestAnimationFrame(this.loop);
-    // slow game loop to 15 fps instead of 60 (60/15 = 4)
-    if (this.count++ < 8) {
-      return;
-    }
-
-    this.count = 0;
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.snake.x += this.snake.dx;
@@ -84,8 +77,8 @@ class SnakeGame {
       this.context.fillRect(cell.x, cell.y, this.grid - 1, this.grid - 1);
 
       if (cell.x === this.apple.x && cell.y === this.apple.y) {
+        window.parent.postMessage("hit", "*");
         this.snake.maxCells++;
-
         this.apple.x = this.getRandomInt(0, this.numCellsW) * this.grid;
         this.apple.y = this.getRandomInt(0, this.numCellsH) * this.grid;
         this.currentScore += 10;
@@ -97,6 +90,7 @@ class SnakeGame {
           cell.x === this.snake.cells[i].x &&
           cell.y === this.snake.cells[i].y
         ) {
+          window.parent.postMessage("die", "*");
           this.currentScore = 0;
           this.updateScore();
           this.snake.x = 160;
@@ -175,12 +169,12 @@ class SnakeGame {
 
   start() {
     this.listenKeyboard();
-    this.loopId = requestAnimationFrame(this.loop);
+    this.loopId = setInterval(this.loop, this.loopInterval);
   }
 
   destroy() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    cancelAnimationFrame(this.loopId);
+    clearInterval(this.loopId);
     window.removeEventListener("message", this.handleParentMessage);
     this.canvas.style.display = "none";
   }
