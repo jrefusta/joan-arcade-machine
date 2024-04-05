@@ -1,9 +1,20 @@
-# My Room in 3D
+# Joan's Arcade Machine
+
+In this section of my portfolio, I aim to demonstrate my skills as a video game developer by recreating three of the most iconic games in history: Snake, Tetris, and Breakout.
 
 ## Links
 
-- [GitHub](https://github.com/brunosimon/my-room-in-3d)
-- [Live](https://my-room-in-3d.vercel.app)
+### Joan Ramos Refusta's Portfolio
+- [Source Code](https://github.com/jrefusta/joan-portfolio)
+- [Live Demo](https://joanramosrefusta.com/)
+
+### Joan's OS
+- [Source Code](https://github.com/jrefusta/joan-os)
+- [Live Demo](https://joan-os.vercel.app/)
+
+### Joan's Art Gallery
+- [Source Code](https://github.com/jrefusta/joan-art-gallery)
+- [Live Demo](https://joan-art-gallery.vercel.app/)
 
 ## Setup
 
