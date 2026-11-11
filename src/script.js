@@ -1,3 +1,4 @@
+import { isPortfolioKeyMessage, postToPortfolio } from "./portfolio-messages.js";
 import "./style.css";
 import SnakeGame from "./snake.js";
 import Tetris from "./tetris.js";
@@ -24,25 +25,25 @@ function handleKeyPress(event) {
   if (currentGame == null) {
     switch (event.key) {
       case "ArrowUp":
-        window.parent.postMessage("select1", "*");
+        postToPortfolio("select1");
         selectedIndex = selectedIndex === 0 ? 2 : selectedIndex - 1;
         break;
       case "ArrowDown":
-        window.parent.postMessage("select1", "*");
+        postToPortfolio("select1");
         selectedIndex = selectedIndex === 2 ? 0 : selectedIndex + 1;
         break;
       case " ":
-        window.parent.postMessage("select2", "*");
+        postToPortfolio("select2");
         startGameSelected();
         break;
       case "Enter":
-        window.parent.postMessage("select2", "*");
+        postToPortfolio("select2");
         startGameSelected();
         break;
     }
     updateSelected();
   } else if (event.key == "Escape" && currentGame != null) {
-    window.parent.postMessage("select2", "*");
+    postToPortfolio("select2");
     currentScoreElement.style.display = "none";
     maxScoreElement.style.display = "none";
     currentGame.destroy();
@@ -81,7 +82,7 @@ function startGameSelected() {
 }
 
 function handleParentMessage(event) {
-  if (event.data.type === "keyDownParent") {
+  if (isPortfolioKeyMessage(event) && event.data.type === "keyDownParent") {
     handleKeyPress(event.data);
   }
 }

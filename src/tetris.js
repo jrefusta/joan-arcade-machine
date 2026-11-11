@@ -1,3 +1,4 @@
+import { isPortfolioKeyMessage, postToPortfolio } from "./portfolio-messages.js";
 // Class adapted from https://gist.github.com/straker/3c98304f8a6a9174efd8292800891ea1
 class Tetris {
   constructor() {
@@ -200,7 +201,7 @@ class Tetris {
       for (let col = 0; col < this.tetromino.matrix[row].length; col++) {
         if (this.tetromino.matrix[row][col]) {
           if (this.tetromino.row + row < 0) {
-            window.parent.postMessage("die", "*");
+            postToPortfolio("die");
             this.showGameOver();
             return;
           }
@@ -225,9 +226,9 @@ class Tetris {
       }
     }
     if (numClears > 0) {
-      window.parent.postMessage("tetris", "*");
+      postToPortfolio("tetris");
     } else {
-      window.parent.postMessage("select1", "*");
+      postToPortfolio("select1");
     }
     if (numClears == 0) {
       this.currentScore += 10;
@@ -278,7 +279,7 @@ class Tetris {
   }
 
   handleParentMessage = (event) => {
-    if (event.data.type === "keyDownParent") {
+    if (isPortfolioKeyMessage(event) && event.data.type === "keyDownParent") {
       this.keyDownHandler(event.data);
     }
   };

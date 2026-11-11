@@ -1,3 +1,4 @@
+import { isPortfolioKeyMessage, postToPortfolio } from "./portfolio-messages.js";
 // Class adapted from https://gist.github.com/straker/98a2aed6a7686d26c04810f08bfaf66b
 class BreakOut {
   constructor() {
@@ -96,11 +97,11 @@ class BreakOut {
     this.ball.y += this.ball.dy;
 
     if (this.ball.x < 0) {
-      window.parent.postMessage("hit", "*");
+      postToPortfolio("hit");
       this.ball.x = 0;
       this.ball.dx *= -1;
     } else if (this.ball.x + this.ball.width > this.canvas.width) {
-      window.parent.postMessage("hit", "*");
+      postToPortfolio("hit");
       this.ball.x = this.canvas.width - this.ball.width;
       this.ball.dx *= -1;
     }
@@ -115,7 +116,7 @@ class BreakOut {
       this.ball.y = 300;
       this.ball.dx = 0;
       this.ball.dy = 0;
-      window.parent.postMessage("die", "*");
+      postToPortfolio("die");
       this.resetLevel();
     }
     this.checkBallPaddleCollision();
@@ -123,7 +124,7 @@ class BreakOut {
     for (let i = 0; i < this.bricks.length; i++) {
       const brick = this.bricks[i];
       if (this.collides(this.ball, brick)) {
-        window.parent.postMessage("hit", "*");
+        postToPortfolio("hit");
         switch (brick.colorCode) {
           case "Y":
             this.currentScore += 1;
@@ -238,7 +239,7 @@ class BreakOut {
     };
 
     if (this.collides(this.ball, innerCenter)) {
-      window.parent.postMessage("hit", "*");
+      postToPortfolio("hit");
       this.ball.dx = this.ball.dx < 0 ? -1 : 1;
       this.ball.dy = this.ball.dy < 0 ? 2 : -2;
       this.ball.y = this.paddle.y - this.ball.height;
@@ -246,7 +247,7 @@ class BreakOut {
       this.collides(this.ball, innerRight) ||
       this.collides(this.ball, innerLeft)
     ) {
-      window.parent.postMessage("hit", "*");
+      postToPortfolio("hit");
       this.ball.dx = this.ball.dx < 0 ? -2 : 2;
       this.ball.dy = this.ball.dy < 0 ? 2 : -2;
       this.ball.y = this.paddle.y - this.ball.height;
@@ -254,7 +255,7 @@ class BreakOut {
       this.collides(this.ball, outsideRight) ||
       this.collides(this.ball, outsideLeft)
     ) {
-      window.parent.postMessage("hit", "*");
+      postToPortfolio("hit");
       this.ball.dx = this.ball.dx < 0 ? -2 : 2;
       this.ball.dy = this.ball.dy < 0 ? 1 : -1;
       this.ball.y = this.paddle.y - this.ball.height;
@@ -289,6 +290,10 @@ class BreakOut {
   }
 
   handleParentMessage = (event) => {
+    if (!isPortfolioKeyMessage(event)) {
+      return;
+    }
+
     if (event.data.type === "keyDownParent") {
       this.keyDownHandler(event.data);
     } else if (event.data.type === "keyUpParent") {

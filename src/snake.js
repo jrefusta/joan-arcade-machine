@@ -1,3 +1,4 @@
+import { isPortfolioKeyMessage, postToPortfolio } from "./portfolio-messages.js";
 // Class adapted from https://gist.github.com/straker/ff00b4b49669ad3dec890306d348adc4
 class SnakeGame {
   constructor() {
@@ -77,7 +78,7 @@ class SnakeGame {
       this.context.fillRect(cell.x, cell.y, this.grid - 1, this.grid - 1);
 
       if (cell.x === this.apple.x && cell.y === this.apple.y) {
-        window.parent.postMessage("hit", "*");
+        postToPortfolio("hit");
         this.snake.maxCells++;
         this.apple.x = this.getRandomInt(0, this.numCellsW) * this.grid;
         this.apple.y = this.getRandomInt(0, this.numCellsH) * this.grid;
@@ -90,7 +91,7 @@ class SnakeGame {
           cell.x === this.snake.cells[i].x &&
           cell.y === this.snake.cells[i].y
         ) {
-          window.parent.postMessage("die", "*");
+          postToPortfolio("die");
           this.currentScore = 0;
           this.updateScore();
           this.snake.x = 160;
@@ -113,7 +114,7 @@ class SnakeGame {
   }
 
   handleParentMessage = (event) => {
-    if (event.data.type === "keyDownParent") {
+    if (isPortfolioKeyMessage(event) && event.data.type === "keyDownParent") {
       this.keyListener(event.data);
     }
   };
